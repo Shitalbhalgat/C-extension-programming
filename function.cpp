@@ -27,6 +27,7 @@ void myFunction(string country = "China") {
 }
 // decalration of function 
 void f5();
+void f6(int ,int,int=10);
 int main() {
 // calling the function
 f1();
@@ -39,13 +40,21 @@ cout<<" calling from f4() "<<f4(10,20);
   myFunction();
   myFunction("USA");
   f5();
+    f6();
+    f6(1,2);
+  f6(1);
+    f6(1,2, 3);
+    
    return 0;
 }
 void f5()
 {
     cout<<"calling from f5()";
 }
-
+void f6(int a,int b,int c)
+{
+    cout<<"sun of three number is "<<a+b+c<<endl;
+}
 
 
 // }// program to add two numbers using a function
