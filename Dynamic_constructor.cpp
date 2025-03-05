@@ -32,9 +32,9 @@ public:
 int main()
 {
     A obj1,obj2(20);
-    cout<<"The value of object obj1 is: ";
+    cout<<"The value of object obj1 is: "<<endl;
     obj1.display();
-    cout<<"\nThe value of object 0bj2 is: ";
+    cout<<"The value of object 0bj2 is: ";
     obj2.display();
     return 0;
 }
