@@ -7,31 +7,65 @@ class Student
     public:
         string name;
         int rollNo;
-        bool isPresent;
-    
+        // bool isPresent=false
+        int attendanceCount;
         Student() 
         {
-            isPresent = false;
+            attendanceCount = 0;
+
         }
+        
+        // Function to display student attendance
+        bool studentlogin(Student students[], int &studentCount) 
+        {
+            int rollNo;
+            cout << "Enter your roll number: ";
+            cin >> rollNo;
+        
+            // Authenticate student
+            for (int i = 0; i <studentCount; i++)
+            {
+                if (students[i].rollNo == rollNo) 
+                {
+                displayStudent(rollNo,students,studentCount);
+                 return true; 
+                } 
+            }
+            return false;
+         }
+    void displayStudent( int roll ,Student students[], int &studentCount)
+    {
+        for (int i = 0; i < studentCount; i++) 
+        {
+            if (students[i].rollNo == roll) 
+            {
+                cout<<"\nAttendance for Roll No "<< students[i].rollNo <<" Name "<<students[i].name;
+                // cout<<(students[i].attendanceCount ? "Present" : "Absent") << endl;
+               int a= students[i].attendanceCount ? students[i].attendanceCount : 0 ;
+               cout<<" : "<<a;
+
+                break;
+            }
+        }
+    }
     };
 class admin
  {
     string username, password;
 public:
-// Function to authenticate admin
+
 bool Adminlogin() 
 {
-   const string correctPassword = "admin123"; // Hardcoded admin password
+   const string correctPassword = "admin";
    cout<<"\n\t\t\tEnter username : ";
     cin>>username;
     cout<<"\n\t\t\tEnter password : ";
     cin>>password;
    return password == correctPassword;
 }
-// 
 int markAttendance(Student students[], int studentCount)
 {
-int rollNo;
+    int rollNo;
     bool found = false;
     cout<<"Enter roll number to mark attendance: ";
     cin>>rollNo;
@@ -39,7 +73,7 @@ int rollNo;
     for (int i = 0; i < studentCount; i++) {
         if (students[i].rollNo == rollNo) 
         {
-            students[i].isPresent = true;
+            students[i].attendanceCount++;
             found = true;
             cout<<"Attendance marked for "<<students[i].name<<endl;
             break;
@@ -50,7 +84,7 @@ int rollNo;
     {
         cout<<"Student with roll number "<<rollNo <<"not found!"<<endl;
     }
-saveData(students, studentCount);
+writetofile(students, studentCount);
 }
 
 void addStudent(Student students[], int &studentCount) 
@@ -64,12 +98,12 @@ void addStudent(Student students[], int &studentCount)
     
         students[studentCount].name = name;
         students[studentCount].rollNo = rollNo;
-        students[studentCount].isPresent = false;
+        students[studentCount].attendanceCount = 0;
         studentCount++;
         cout<<"Student added successfully!"<<endl;
 
 // Save data to file after adding student
-    saveData(students, studentCount);
+    writetofile(students, studentCount);
 }
 
 void listStudents(Student students[], int studentCount) {
@@ -86,14 +120,14 @@ void listStudents(Student students[], int studentCount) {
         cout<<setw(8)<<students[i].rollNo<<" | "<<students[i].name<<endl;
     }
 }
-void saveData(Student students[], int &studentCount) 
+void writetofile(Student students[], int &studentCount) 
 {
     ofstream outFile("student.txt",ios::binary);
     outFile.write((char*)&studentCount, sizeof(studentCount));
     outFile.write((char*)students, sizeof(Student) * studentCount);
     outFile.close();
 }
-void loadData(Student students[], int &studentCount) {
+void readfromfile(Student students[], int &studentCount) {
     ifstream inFile("student.txt", ios::binary);
     if (inFile) {
         inFile.read((char*)&studentCount, sizeof(studentCount));
@@ -114,14 +148,7 @@ void listAttendanceCount(Student students[], int studentCount) {
     cout<<"Roll No. | Name                  | Attendance Count\n";
     cout<<"-----------------------------------------------\n";
     for (int i = 0; i < studentCount; i++) {
-        int count = 0;
-        for (int j = 0; j < studentCount; j++) {
-            if (students[j].rollNo == students[i].rollNo && students[j].isPresent)
-            {
-                count++;
-            }
-        }
-        cout<<setw(8)<<students[i].rollNo<<"| "<<setw(20)<<students[i].name<<" | " <<count<<endl;
+       cout<<setw(8)<<students[i].rollNo<<"| "<<setw(20)<<students[i].name<<" | " <<students[i].attendanceCount<<endl;
     }
 }
 };
@@ -131,11 +158,11 @@ void listAttendanceCount(Student students[], int studentCount) {
 int main()
 {
     int choice;
-    bool isAdmin = false;
+    bool isAdmin = false;   
     admin a;
-    Student students[100];
+    Student students[100],s;
     int studentCount = 0; 
-a.loadData(students, studentCount);
+a.readfromfile(students, studentCount);
 while (1) 
     {
         cout<< "\n\n ------------------ Welcome to Attendence Management System------------------\n";
@@ -149,7 +176,15 @@ while (1)
         case 0:
             exit(0);
         case 1:
-            // studentlogin();
+                if(s.studentlogin(students,studentCount))
+                {
+                   cout<<"\t\t";
+                }
+                else
+                {
+                    cout << "Invalid roll number!" << endl;
+                }
+            
             break;
         case 2:
            if(a.Adminlogin())
@@ -196,7 +231,8 @@ while (1)
             }
             
             else{
-                cout<<"\t\t\tEnter a correct password";}
+                cout<<"\t\t\tEnter a correct password";
+            }
             break;
 
         default:
